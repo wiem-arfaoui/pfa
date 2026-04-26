@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import re
+import sys
 from typing import Any
 
 import psycopg
@@ -12,6 +14,51 @@ from ollama_client import OllamaClient
 
 
 EXIT_COMMANDS = {"exit", "quit", "q", "bye"}
+
+
+def sql_like_pattern(value: str) -> str:
+    normalized = normalize_query(value)
+    tokens = [token for token in re.split(r"\s+", normalized) if token]
+    return "%" + "%".join(tokens) + "%"
+
+
+def split_slash_parts(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [part.strip() for part in str(value).split("/") if part.strip()]
+
+
+def teacher_specific_view(
+    teacher: str | None,
+    subject: str | None,
+    room: str | None,
+    teacher_hint: str | None,
+) -> tuple[str | None, str | None, str | None]:
+    if not teacher or not teacher_hint:
+        return teacher, subject, room
+
+    teacher_parts = split_slash_parts(teacher)
+    if len(teacher_parts) <= 1:
+        return teacher, subject, room
+
+    normalized_hint = normalize_query(teacher_hint)
+    selected_index = None
+    for idx, part in enumerate(teacher_parts):
+        normalized_part = normalize_query(part)
+        if normalized_hint == normalized_part or normalized_hint in normalized_part or normalized_part in normalized_hint:
+            selected_index = idx
+            break
+
+    if selected_index is None:
+        return teacher, subject, room
+
+    subject_parts = split_slash_parts(subject)
+    room_parts = split_slash_parts(room)
+
+    selected_teacher = teacher_parts[selected_index]
+    selected_subject = subject_parts[selected_index] if len(subject_parts) == len(teacher_parts) else subject
+    selected_room = room_parts[selected_index] if len(room_parts) == len(teacher_parts) else room
+    return selected_teacher, selected_subject, selected_room
 
 
 def connect_db() -> psycopg.Connection[Any]:
@@ -55,7 +102,8 @@ def context_emploi(conn: psycopg.Connection[Any], route: IntentResult) -> str:
         params.append(session_type)
     if hint:
         filters.append("(LOWER(et.matiere) LIKE LOWER(%s) OR LOWER(et.enseignant) LIKE LOWER(%s))")
-        params.extend([f"%{hint}%", f"%{hint}%"])
+        pattern = sql_like_pattern(hint)
+        params.extend([pattern, pattern])
 
     query = f"""
         SELECT et.jour, et.heure_debut, et.heure_fin, et.matiere, et.enseignant, et.salle, et.type_seance
@@ -302,6 +350,7 @@ def context_calendrier(conn: psycopg.Connection[Any], route: IntentResult) -> st
 
 def context_enseignants(conn: psycopg.Connection[Any], route: IntentResult) -> str:
     hint = route.entities.get("hint")
+    teacher_hint = route.entities.get("teacher_hint")
     group_name = route.entities.get("group")
     day = route.entities.get("day")
     params: list[Any] = []
@@ -337,6 +386,7 @@ def context_enseignants(conn: psycopg.Connection[Any], route: IntentResult) -> s
 
     lines = ["Informations enseignants:"]
     for teacher, subject, group, row_day, start, room in rows:
+        teacher, subject, room = teacher_specific_view(teacher, subject, room, teacher_hint)
         lines.append(f"- {teacher}: {subject}, {group}, {row_day} {start:%H:%M}, salle {room}")
     return "\n".join(lines)
 
@@ -361,7 +411,7 @@ def context_salles(conn: psycopg.Connection[Any], route: IntentResult) -> str:
         params.append(day)
     if subject_hint:
         filters.append("LOWER(et.matiere) LIKE LOWER(%s)")
-        params.append(f"%{subject_hint}%")
+        params.append(sql_like_pattern(subject_hint))
     if time_period == "morning":
         filters.append("et.heure_debut < TIME '12:00'")
     elif time_period == "afternoon":
@@ -464,27 +514,34 @@ def answer(
     debug_text = ""
     if debug:
         debug_text = (
-            "[DEBUG]\n"
+            "[DEBUG: INTENT + SQL]\n"
             f"intent={route.intent}\n"
             f"confidence={route.confidence:.2f}\n"
             f"entities={route.entities}\n"
             f"sources={route.sources}\n"
             f"context=\n{context}\n"
-            "[/DEBUG]\n\n"
+            "[/DEBUG: INTENT + SQL]\n\n"
         )
 
     if ollama is None:
         return debug_text + context
 
     try:
-        final_answer = ollama.reformulate(question, context, metadata=build_llm_metadata(route))
+        final_answer = ollama.reformulate(
+            question,
+            context,
+            metadata=build_llm_metadata(route),
+            intent=route.intent,
+        )
     except Exception as exc:
         final_answer = (
             "Ollama n'a pas pu reformuler la reponse. Voici le resultat brut:\n"
             f"{context}\n\n"
             f"Erreur Ollama: {exc}"
         )
-    return debug_text + final_answer
+    if debug:
+        return debug_text + "[LLM REFORMULATION]\n" + final_answer + "\n[/LLM REFORMULATION]"
+    return final_answer
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -495,6 +552,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8")
+
     args = build_parser().parse_args()
     ollama = None if args.no_llm else OllamaClient()
     print("Assistant ENICarthage pret. Tapez 'exit' pour quitter.")

@@ -73,6 +73,16 @@ SALLE_KEYWORDS = ("salle", "local", "amphi", "labo", "laboratoire", "ou se derou
 
 
 def normalize_query(text: str) -> str:
+    text = (
+        text.replace("Ã©", "é")
+        .replace("Ã¨", "è")
+        .replace("Ãª", "ê")
+        .replace("Ã ", "à")
+        .replace("Ã´", "ô")
+        .replace("Ã®", "î")
+        .replace("Ã»", "û")
+        .replace("Ã§", "ç")
+    )
     lowered = text.lower().strip()
     decomposed = unicodedata.normalize("NFD", lowered)
     without_accents = "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
