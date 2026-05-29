@@ -405,7 +405,7 @@ class DataIngestor:
                 contenu_texte=content,
                 metadata={"formation": formation, "source_type": "txt"},
             )
-            chunks = chunk_text(content)
+            chunks = chunk_text(content, target_words=90, overlap_words=20)
             if not chunks:
                 continue
             cur.execute("DELETE FROM document_chunks WHERE document_id = %s", (document_id,))

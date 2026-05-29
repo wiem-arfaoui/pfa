@@ -554,6 +554,44 @@ def extract_alias_candidates(text: str, alias_map: dict[str, str]) -> list[str]:
     return dedupe_preserve_order(candidates)
 
 
+def filter_person_candidates(
+    candidates: list[str],
+    group_alias_map: dict[str, str],
+    formation_alias_map: dict[str, str],
+) -> list[str]:
+    filtered: list[str] = []
+    for candidate in candidates:
+        normalized = normalize_speech_text(candidate).strip(". ")
+        if not normalized:
+            continue
+        if normalized in group_alias_map:
+            continue
+        if normalized in formation_alias_map:
+            continue
+        if any(token in normalized.split() for token in ("emploi", "emplois", "gsi", "gsil", "info", "meca", "inf")):
+            continue
+        if re.fullmatch(r"(gsi|info|inf|meca|gsil)\s*[123]?[a-z]?", normalized):
+            continue
+        filtered.append(candidate)
+    return dedupe_preserve_order(filtered)
+
+
+def should_skip_person_resolution(
+    normalized_text: str,
+    candidate_spans: dict[str, list[str]],
+    inferred_person_role: str,
+) -> bool:
+    if inferred_person_role != "student":
+        return False
+    if candidate_spans.get("group_candidates"):
+        return True
+    if candidate_spans.get("formation_candidates") and not candidate_spans.get("person_candidates"):
+        return True
+    if re.search(r"\b(gsi|gsil|info|meca|inf)\b", normalized_text) and not candidate_spans.get("person_candidates"):
+        return True
+    return False
+
+
 def resolve_days_and_time_refs(text: str) -> dict[str, str]:
     normalized = normalize_speech_text(text)
     result: dict[str, str] = {}
@@ -860,9 +898,15 @@ def resolve_entities_from_speech(
     candidate_spans["subject_candidates"] = dedupe_preserve_order(
         candidate_spans["subject_candidates"] + extract_alias_candidates(normalized_text, aliases["subjects"])
     )
+    candidate_spans["person_candidates"] = filter_person_candidates(
+        candidate_spans["person_candidates"],
+        aliases["groups"],
+        aliases["formations"],
+    )
     temporal_entities = resolve_days_and_time_refs(normalized_text)
 
     inferred_person_role = infer_person_role_from_context(normalized_text, intent_hint=intent_hint)
+    skip_person_resolution = should_skip_person_resolution(normalized_text, candidate_spans, inferred_person_role)
 
     student_matches = (
         match_candidates(
@@ -871,7 +915,7 @@ def resolve_entities_from_speech(
             threshold=0.62,
             entity_type="student",
         )
-        if inferred_person_role in {"student", "unknown"}
+        if inferred_person_role in {"student", "unknown"} and not skip_person_resolution
         else []
     )
     teacher_matches = (
@@ -916,7 +960,7 @@ def resolve_entities_from_speech(
                 threshold=0.55,
             )
 
-    if not best_student and inferred_person_role in {"student", "unknown"} and candidate_spans["person_candidates"]:
+    if not best_student and inferred_person_role in {"student", "unknown"} and candidate_spans["person_candidates"] and not skip_person_resolution:
         top_candidates.setdefault(
             "students",
             top_matches_for_people(candidate_spans["person_candidates"], catalog["students"], threshold=0.55),
@@ -1025,6 +1069,9 @@ def build_resolution_message(result: dict[str, Any]) -> str:
 
     if resolved.get("teacher_name"):
         return f"Nom enseignant resolu: {resolved['teacher_name']}."
+
+    if resolved.get("group"):
+        return f"Groupe resolu: {resolved['group']}."
 
     suggestions: list[str] = []
     if inferred_role == "student" and top_candidates.get("students"):

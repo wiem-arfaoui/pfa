@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1300" viewBox="0 0 1700 1300">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#111827"/>
+    </marker>
+    <marker id="openArrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6" fill="none" stroke="#111827" stroke-width="1.6"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #374151; }
+      .actor-name { font: 700 16px Arial, sans-serif; fill: #111827; }
+      .participant { fill: #f8fbff; stroke: #1d4ed8; stroke-width: 2; rx: 10; }
+      .participant-alt { fill: #eefaf1; stroke: #047857; stroke-width: 2; rx: 10; }
+      .participant-rag { fill: #fbf8ff; stroke: #7c3aed; stroke-width: 2; rx: 10; }
+      .participant-llm { fill: #fff1f2; stroke: #be123c; stroke-width: 2; rx: 10; }
+      .lifeline { stroke: #6b7280; stroke-width: 1.5; stroke-dasharray: 8 6; }
+      .activation { fill: #ffffff; stroke: #111827; stroke-width: 1.5; }
+      .message { stroke: #111827; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .return { stroke: #111827; stroke-width: 1.6; fill: none; stroke-dasharray: 7 5; marker-end: url(#openArrow); }
+      .self { stroke: #111827; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .msg-text { font: 14px Arial, sans-serif; fill: #111827; }
+      .small { font: 12.5px Arial, sans-serif; fill: #374151; }
+      .frame { fill: #ffffff; stroke: #374151; stroke-width: 1.6; rx: 4; }
+      .frame-label { fill: #f3f4f6; stroke: #374151; stroke-width: 1.4; }
+      .frame-title { font: 700 13px Arial, sans-serif; fill: #111827; }
+    </style>
+  </defs>
+
+  <rect width="1700" height="1180" fill="#ffffff"/>
+  <text x="850" y="45" text-anchor="middle" class="title">Diagramme de Sequence d'une Question Textuelle</text>
+  <text x="850" y="75" text-anchor="middle" class="subtitle">Traitement d'une question ecrite depuis l'interface jusqu'a la reponse finale</text>
+
+  <!-- Participants -->
+  <g id="participants">
+    <circle cx="95" cy="130" r="14" fill="#ffffff" stroke="#111827" stroke-width="2"/>
+    <line x1="95" y1="144" x2="95" y2="178" stroke="#111827" stroke-width="2"/>
+    <line x1="70" y1="156" x2="120" y2="156" stroke="#111827" stroke-width="2"/>
+    <line x1="95" y1="178" x2="74" y2="210" stroke="#111827" stroke-width="2"/>
+    <line x1="95" y1="178" x2="116" y2="210" stroke="#111827" stroke-width="2"/>
+    <text x="95" y="235" text-anchor="middle" class="actor-name">Utilisateur</text>
+
+    <rect x="185" y="110" width="155" height="72" class="participant"/>
+    <text x="262" y="140" text-anchor="middle" class="actor-name">Interface</text>
+    <text x="262" y="162" text-anchor="middle" class="small">Web / mobile</text>
+
+    <rect x="420" y="110" width="155" height="72" class="participant-alt"/>
+    <text x="497" y="140" text-anchor="middle" class="actor-name">API Backend</text>
+    <text x="497" y="162" text-anchor="middle" class="small">endpoint question</text>
+
+    <rect x="655" y="110" width="165" height="72" class="participant-alt"/>
+    <text x="737" y="140" text-anchor="middle" class="actor-name">Routage</text>
+    <text x="737" y="162" text-anchor="middle" class="small">intent_router.py</text>
+
+    <rect x="900" y="110" width="175" height="72" class="participant-alt"/>
+    <text x="987" y="140" text-anchor="middle" class="actor-name">Resolution</text>
+    <text x="987" y="162" text-anchor="middle" class="small">entity_resolver.py</text>
+
+    <rect x="1155" y="110" width="165" height="72" class="participant"/>
+    <text x="1237" y="140" text-anchor="middle" class="actor-name">PostgreSQL</text>
+    <text x="1237" y="162" text-anchor="middle" class="small">SQL + pgvector</text>
+
+    <rect x="1390" y="110" width="145" height="72" class="participant-llm"/>
+    <text x="1462" y="140" text-anchor="middle" class="actor-name">Ollama</text>
+    <text x="1462" y="162" text-anchor="middle" class="small">LLM local</text>
+
+    <rect x="1565" y="110" width="115" height="72" class="participant-rag"/>
+    <text x="1622" y="140" text-anchor="middle" class="actor-name">Reponse</text>
+    <text x="1622" y="162" text-anchor="middle" class="small">formatage</text>
+  </g>
+
+  <!-- Lifelines -->
+  <line x1="95" y1="250" x2="95" y2="1220" class="lifeline"/>
+  <line x1="262" y1="182" x2="262" y2="1220" class="lifeline"/>
+  <line x1="497" y1="182" x2="497" y2="1220" class="lifeline"/>
+  <line x1="737" y1="182" x2="737" y2="1220" class="lifeline"/>
+  <line x1="987" y1="182" x2="987" y2="1220" class="lifeline"/>
+  <line x1="1237" y1="182" x2="1237" y2="1220" class="lifeline"/>
+  <line x1="1462" y1="182" x2="1462" y2="1220" class="lifeline"/>
+  <line x1="1622" y1="182" x2="1622" y2="1220" class="lifeline"/>
+
+  <!-- Activations -->
+  <rect x="254" y="285" width="16" height="915" class="activation"/>
+  <rect x="489" y="335" width="16" height="850" class="activation"/>
+  <rect x="729" y="390" width="16" height="100" class="activation"/>
+  <rect x="979" y="525" width="16" height="140" class="activation"/>
+  <rect x="1229" y="590" width="16" height="335" class="activation"/>
+  <rect x="1454" y="1005" width="16" height="85" class="activation"/>
+  <rect x="1614" y="945" width="16" height="195" class="activation"/>
+
+  <!-- Messages -->
+  <line x1="112" y1="300" x2="254" y2="300" class="message"/>
+  <text x="180" y="292" text-anchor="middle" class="msg-text">1. saisirQuestion(texte)</text>
+
+  <line x1="270" y1="350" x2="489" y2="350" class="message"/>
+  <text x="380" y="342" text-anchor="middle" class="msg-text">2. envoyer la question au backend</text>
+
+  <path d="M505 382 L565 382 L565 417 L505 417" class="self"/>
+  <text x="588" y="393" class="msg-text">3. normaliserQuestion()</text>
+  <text x="588" y="412" class="small">nettoyage, accents, alias simples</text>
+
+  <line x1="505" y1="435" x2="729" y2="435" class="message"/>
+  <text x="617" y="427" text-anchor="middle" class="msg-text">4. analyser la question</text>
+
+  <line x1="729" y1="485" x2="505" y2="485" class="return"/>
+  <text x="617" y="477" text-anchor="middle" class="msg-text">5. IntentResult(intent, entites initiales)</text>
+
+  <line x1="505" y1="545" x2="979" y2="545" class="message"/>
+  <text x="742" y="537" text-anchor="middle" class="msg-text">6. resolve_entities(question, route)</text>
+
+  <line x1="995" y1="610" x2="1229" y2="610" class="message"/>
+  <text x="1112" y="602" text-anchor="middle" class="msg-text">7. chercher entites exactes</text>
+  <text x="1112" y="626" text-anchor="middle" class="small">groupes, etudiants, matieres, enseignants</text>
+
+  <line x1="1229" y1="665" x2="995" y2="665" class="return"/>
+  <text x="1112" y="657" text-anchor="middle" class="msg-text">8. entites resolues</text>
+
+  <line x1="979" y1="705" x2="505" y2="705" class="return"/>
+  <text x="742" y="697" text-anchor="middle" class="msg-text">9. route enrichie</text>
+
+  <!-- Alternative frame -->
+  <rect x="455" y="730" width="900" height="200" class="frame"/>
+  <polygon points="455,730 565,730 585,755 455,755" class="frame-label"/>
+  <text x="500" y="748" text-anchor="middle" class="frame-title">alt</text>
+  <text x="600" y="750" class="small">source choisie selon l'intention</text>
+  <line x1="455" y1="830" x2="1355" y2="830" stroke="#374151" stroke-width="1.4" stroke-dasharray="7 5"/>
+  <text x="475" y="775" class="frame-title">[question structuree]</text>
+
+  <line x1="505" y1="785" x2="1229" y2="785" class="message"/>
+  <text x="867" y="777" text-anchor="middle" class="msg-text">10a. requetes SQL ciblees</text>
+  <text x="867" y="801" text-anchor="middle" class="small">emplois, etudiants, groupes, plans, salles, calendrier</text>
+
+  <line x1="1229" y1="820" x2="505" y2="820" class="return"/>
+  <text x="867" y="812" text-anchor="middle" class="msg-text">11a. resultats structures</text>
+
+  <text x="475" y="855" class="frame-title">[question descriptive]</text>
+  <line x1="505" y1="870" x2="1229" y2="870" class="message"/>
+  <text x="867" y="862" text-anchor="middle" class="msg-text">10b. recherche RAG par similarite</text>
+  <text x="867" y="886" text-anchor="middle" class="small">documents, document_chunks, embedding, pgvector</text>
+
+  <line x1="1229" y1="910" x2="505" y2="910" class="return"/>
+  <text x="867" y="902" text-anchor="middle" class="msg-text">11b. passages documentaires pertinents</text>
+
+  <!-- Context build and response module -->
+  <line x1="505" y1="955" x2="1614" y2="955" class="message"/>
+  <text x="1060" y="947" text-anchor="middle" class="msg-text">12. construireContexte(resultats)</text>
+
+  <line x1="1614" y1="990" x2="505" y2="990" class="return"/>
+  <text x="1060" y="982" text-anchor="middle" class="msg-text">13. contexte structure</text>
+
+  <line x1="505" y1="1020" x2="1454" y2="1020" class="message"/>
+  <text x="980" y="1012" text-anchor="middle" class="msg-text">14. reformulate(question, contexte, metadonnees)</text>
+
+  <line x1="1454" y1="1080" x2="505" y2="1080" class="return"/>
+  <text x="980" y="1072" text-anchor="middle" class="msg-text">15. reponse naturelle</text>
+
+  <line x1="505" y1="1110" x2="1614" y2="1110" class="message"/>
+  <text x="1060" y="1102" text-anchor="middle" class="msg-text">16. preparerReponseFinale()</text>
+
+  <line x1="1614" y1="1140" x2="505" y2="1140" class="return"/>
+  <text x="1060" y="1132" text-anchor="middle" class="msg-text">17. reponse finale</text>
+
+  <line x1="489" y1="1170" x2="270" y2="1170" class="return"/>
+  <text x="380" y="1162" text-anchor="middle" class="msg-text">18. JSON reponse</text>
+
+  <line x1="254" y1="1200" x2="112" y2="1200" class="return"/>
+  <text x="183" y="1192" text-anchor="middle" class="msg-text">19. afficherReponse()</text>
+
+  <rect x="60" y="1255" width="1580" height="34" fill="#ffffff"/>
+  <text x="850" y="1277" text-anchor="middle" class="small">Notation UML: fleches pleines = appels, fleches pointillees = retours, rectangles verticaux = periodes d'activation, cadre alt = branche SQL ou RAG.</text>
+</svg>

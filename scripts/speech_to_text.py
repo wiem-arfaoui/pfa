@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import tempfile
 from pathlib import Path
 
+import psycopg
 from faster_whisper import WhisperModel
 
 from intent_router import parse_question
@@ -24,17 +26,43 @@ def load_model(model_size: str = DEFAULT_MODEL_SIZE) -> WhisperModel:
     )
 
 
-def build_initial_prompt() -> str:
+def build_initial_prompt(conn: psycopg.Connection | None = None) -> str:
     return (
-        "Contexte universitaire ENICarthage. "
-        "Mots frequents: emploi du temps, salle, groupe, etudiant, enseignant, formation. "
-        "Formations possibles: informatique, infotronique, mecatronique, industrielle. "
-        "Codes groupes frequents: GSI 1A, GSI 1B, GSI 2A, GSI 2B, GSI 3A, GSI 3B, "
-        "INFO 1A, INFO 1B, INFO 2A, INFO 2B, MECA 1A, MECA 2A, GSIL 1A, GSIL 2A, GSIL 3 LOG. "
-        "Matieres frequentes: developpement mobile, linux embarque, intelligence artificielle, "
-        "bus com et int, rtos, prot et reconf dyn. "
-        "Les codes de groupe doivent etre conserves tels quels."
+        "Contexte universitaire. "
+        "Conserver les codes groupes tels quels: GSI, GSIL, INFO, MECA. "
+        "Question courte en francais."
     )
+
+
+def clean_transcription_text(text: str) -> str:
+    cleaned = " ".join(text.split()).strip()
+    if not cleaned:
+        return cleaned
+
+    repeated_group = re.search(
+        r"\b(?P<group>(?:GSI|GSIL|INFO|MECA)\s*[123]\s*[A-D])\b(?:\s*,?\s*(?P=group)\b){2,}",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    if repeated_group:
+        return repeated_group.group("group").upper().replace("  ", " ")
+
+    parts = [part.strip(" ,.") for part in cleaned.split(",") if part.strip(" ,.")]
+    if len(parts) >= 4:
+        unique_parts: list[str] = []
+        for part in parts:
+            if not unique_parts or unique_parts[-1].lower() != part.lower():
+                unique_parts.append(part)
+        if len(unique_parts) == 1:
+            return unique_parts[0]
+        if len(unique_parts) >= 2 and len(set(part.lower() for part in unique_parts)) == 1:
+            return unique_parts[0]
+        cleaned = ", ".join(unique_parts)
+
+    repeated_match = re.fullmatch(r"(.{3,40}?)(?:,\s*\1){2,}", cleaned, flags=re.IGNORECASE)
+    if repeated_match:
+        return repeated_match.group(1).strip(" ,.")
+    return cleaned
 
 
 def transcribe_audio(
@@ -42,6 +70,7 @@ def transcribe_audio(
     model_size: str = DEFAULT_MODEL_SIZE,
     language: str = DEFAULT_LANGUAGE,
     vad_filter: bool = True,
+    initial_prompt: str | None = None,
 ) -> str:
     model = load_model(model_size)
     segments, info = model.transcribe(
@@ -49,7 +78,7 @@ def transcribe_audio(
         language=language,
         beam_size=5,
         vad_filter=vad_filter,
-        initial_prompt=build_initial_prompt(),
+        initial_prompt=initial_prompt or build_initial_prompt(),
     )
 
     print(f"Langue detectee: {info.language} ({info.language_probability:.2f})")
@@ -145,22 +174,34 @@ def main() -> None:
         audio_path = args.audio
         if not audio_path.exists():
             raise FileNotFoundError(f"Fichier audio introuvable: {audio_path}")
+        initial_prompt = None
+        if args.link_db:
+            with connect_db() as conn:
+                initial_prompt = build_initial_prompt(conn)
         final_text = transcribe_audio(
             audio_path,
             model_size=args.model,
             language=args.language,
             vad_filter=not args.no_vad,
+            initial_prompt=initial_prompt,
         )
     else:
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
             audio_path = Path(temp_file.name)
         record_audio(audio_path, seconds=args.record, device=args.device)
+        initial_prompt = None
+        if args.link_db:
+            with connect_db() as conn:
+                initial_prompt = build_initial_prompt(conn)
         final_text = transcribe_audio(
             audio_path,
             model_size=args.model,
             language=args.language,
             vad_filter=not args.no_vad,
+            initial_prompt=initial_prompt,
         )
+
+    final_text = clean_transcription_text(final_text)
 
     print("\nTexte final:")
     print(final_text or "[Aucun texte detecte]")

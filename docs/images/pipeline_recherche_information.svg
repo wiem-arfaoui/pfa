@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1020" viewBox="0 0 1600 1020">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #374151; }
+      .section { font: 700 20px Arial, sans-serif; fill: #0f3b8f; }
+      .box-title { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .text { font: 15px Arial, sans-serif; fill: #111827; }
+      .small { font: 13px Arial, sans-serif; fill: #374151; }
+      .note { font: italic 14px Arial, sans-serif; fill: #0f3b8f; }
+      .layer { fill: #ffffff; stroke: #1d4ed8; stroke-width: 1.5; stroke-dasharray: 7 5; rx: 18; }
+      .input { fill: #f8fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .process { fill: #fff8e8; stroke: #92400e; stroke-width: 2; rx: 14; }
+      .python { fill: #eefaf1; stroke: #047857; stroke-width: 2; rx: 14; }
+      .db { fill: #f7fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .rag { fill: #fbf8ff; stroke: #7c3aed; stroke-width: 2; rx: 14; }
+      .llm { fill: #fff1f2; stroke: #be123c; stroke-width: 2; rx: 14; }
+      .output { fill: #f0fdf4; stroke: #047857; stroke-width: 2; rx: 14; }
+      .decision { fill: #ffffff; stroke: #111827; stroke-width: 2; }
+      .arrow { stroke: #1f2937; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .thin { stroke: #1f2937; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #1f2937; stroke-width: 1.8; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrow); }
+      .label { font: 700 13px Arial, sans-serif; fill: #111827; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1020" fill="#ffffff"/>
+  <text x="800" y="45" text-anchor="middle" class="title">Pipeline de Recherche d'Information</text>
+  <text x="800" y="75" text-anchor="middle" class="subtitle">De la question utilisateur vers une reponse guidee par PostgreSQL, pgvector et Ollama</text>
+
+  <text x="60" y="145" class="section">1. Entree</text>
+  <rect x="230" y="110" width="1140" height="120" class="layer"/>
+
+  <text x="60" y="305" class="section">2. Analyse</text>
+  <rect x="230" y="265" width="1140" height="145" class="layer"/>
+
+  <text x="60" y="495" class="section">3. Choix de</text>
+  <text x="60" y="520" class="section">la source</text>
+  <rect x="230" y="445" width="1140" height="235" class="layer"/>
+
+  <text x="60" y="760" class="section">4. Contexte</text>
+  <rect x="230" y="725" width="1140" height="105" class="layer"/>
+
+  <text x="60" y="900" class="section">5. Reponse</text>
+  <rect x="230" y="870" width="1140" height="110" class="layer"/>
+
+  <!-- Input -->
+  <rect x="310" y="135" width="260" height="70" class="input"/>
+  <text x="440" y="163" text-anchor="middle" class="box-title">Question utilisateur</text>
+  <text x="440" y="187" text-anchor="middle" class="small">texte saisi dans le CLI ou l'interface</text>
+
+  <rect x="670" y="135" width="250" height="70" class="input"/>
+  <text x="795" y="163" text-anchor="middle" class="box-title">Normalisation</text>
+  <text x="795" y="187" text-anchor="middle" class="small">minuscules, accents, alias simples</text>
+
+  <rect x="1020" y="135" width="250" height="70" class="python"/>
+  <text x="1145" y="163" text-anchor="middle" class="box-title">chat_cli.py</text>
+  <text x="1145" y="187" text-anchor="middle" class="small">fonction answer()</text>
+
+  <!-- Analysis -->
+  <rect x="285" y="292" width="255" height="88" class="process"/>
+  <text x="412" y="322" text-anchor="middle" class="box-title">Detection d'intention</text>
+  <text x="412" y="348" text-anchor="middle" class="small">intent_router.py</text>
+  <text x="412" y="368" text-anchor="middle" class="small">emploi, etudiants, plan, RAG...</text>
+
+  <rect x="635" y="292" width="275" height="88" class="process"/>
+  <text x="772" y="322" text-anchor="middle" class="box-title">Extraction initiale</text>
+  <text x="772" y="348" text-anchor="middle" class="small">groupe, jour, formation, salle</text>
+  <text x="772" y="368" text-anchor="middle" class="small">semestre, annee, code UE</text>
+
+  <rect x="1005" y="292" width="285" height="88" class="python"/>
+  <text x="1147" y="322" text-anchor="middle" class="box-title">Resolution des entites</text>
+  <text x="1147" y="348" text-anchor="middle" class="small">entity_resolver.py + PostgreSQL</text>
+  <text x="1147" y="368" text-anchor="middle" class="small">noms, groupes, matieres, enseignants</text>
+
+  <!-- Decision -->
+  <polygon points="800,455 935,525 800,595 665,525" class="decision"/>
+  <text x="800" y="512" text-anchor="middle" class="box-title">Type de</text>
+  <text x="800" y="537" text-anchor="middle" class="box-title">question ?</text>
+
+  <!-- SQL path -->
+  <rect x="285" y="480" width="260" height="95" class="db"/>
+  <text x="415" y="510" text-anchor="middle" class="box-title">Chemin SQL</text>
+  <text x="415" y="536" text-anchor="middle" class="small">questions structurees</text>
+  <text x="415" y="556" text-anchor="middle" class="small">emplois, groupes, etudiants,</text>
+  <text x="415" y="574" text-anchor="middle" class="small">plans, salles, calendrier</text>
+
+  <rect x="285" y="605" width="260" height="50" class="db"/>
+  <text x="415" y="636" text-anchor="middle" class="box-title">Requetes ciblees PostgreSQL</text>
+
+  <!-- RAG path -->
+  <rect x="1055" y="480" width="260" height="95" class="rag"/>
+  <text x="1185" y="510" text-anchor="middle" class="box-title">Chemin RAG</text>
+  <text x="1185" y="536" text-anchor="middle" class="small">questions descriptives</text>
+  <text x="1185" y="556" text-anchor="middle" class="small">formations, objectifs, metiers,</text>
+  <text x="1185" y="574" text-anchor="middle" class="small">comparaisons documentaires</text>
+
+  <rect x="1055" y="605" width="260" height="50" class="rag"/>
+  <text x="1185" y="636" text-anchor="middle" class="box-title">Embedding + pgvector</text>
+
+  <rect x="680" y="625" width="240" height="45" class="process"/>
+  <text x="800" y="653" text-anchor="middle" class="box-title">Controle des informations manquantes</text>
+
+  <!-- Context -->
+  <rect x="305" y="750" width="330" height="55" class="python"/>
+  <text x="470" y="783" text-anchor="middle" class="box-title">Contexte SQL structure</text>
+
+  <rect x="965" y="750" width="330" height="55" class="python"/>
+  <text x="1130" y="783" text-anchor="middle" class="box-title">Contexte RAG documente</text>
+
+  <rect x="675" y="750" width="250" height="55" class="python"/>
+  <text x="800" y="783" text-anchor="middle" class="box-title">build_context()</text>
+
+  <!-- LLM and output -->
+  <rect x="285" y="895" width="295" height="58" class="llm"/>
+  <text x="432" y="919" text-anchor="middle" class="box-title">Prompt avec contexte</text>
+  <text x="432" y="940" text-anchor="middle" class="small">question + metadonnees + donnees recuperees</text>
+
+  <rect x="655" y="895" width="270" height="58" class="llm"/>
+  <text x="790" y="919" text-anchor="middle" class="box-title">Reformulation Ollama</text>
+  <text x="790" y="940" text-anchor="middle" class="small">llama3:latest, temperature faible</text>
+
+  <rect x="1010" y="895" width="290" height="58" class="output"/>
+  <text x="1155" y="919" text-anchor="middle" class="box-title">Reponse finale</text>
+  <text x="1155" y="940" text-anchor="middle" class="small">claire, concise, sans invention</text>
+
+  <!-- Notes -->
+  <text x="800" y="1000" text-anchor="middle" class="note">Principe cle: la reponse finale s'appuie sur le contexte recupere par SQL ou RAG.</text>
+
+  <!-- Arrows input -->
+  <path d="M570 170 L670 170" class="arrow"/>
+  <path d="M920 170 L1020 170" class="arrow"/>
+  <path d="M1145 205 L1145 250 L412 250 L412 292" class="arrow"/>
+
+  <!-- Arrows analysis -->
+  <path d="M540 336 L635 336" class="arrow"/>
+  <path d="M910 336 L1005 336" class="arrow"/>
+  <path d="M1147 380 L1147 425 L800 425 L800 455" class="arrow"/>
+
+  <!-- Decision arrows -->
+  <path d="M665 525 L545 525" class="arrow"/>
+  <text x="575" y="505" text-anchor="middle" class="label">SQL</text>
+  <path d="M935 525 L1055 525" class="arrow"/>
+  <text x="1025" y="505" text-anchor="middle" class="label">RAG</text>
+  <path d="M800 595 L800 625" class="thin"/>
+
+  <path d="M415 575 L415 605" class="arrow"/>
+  <path d="M1185 575 L1185 605" class="arrow"/>
+  <path d="M545 630 L680 648" class="thin"/>
+  <path d="M1055 630 L920 648" class="thin"/>
+
+  <!-- Context arrows -->
+  <path d="M415 655 L470 750" class="arrow"/>
+  <path d="M1185 655 L1130 750" class="arrow"/>
+  <path d="M635 778 L675 778" class="arrow"/>
+  <path d="M965 778 L925 778" class="arrow"/>
+  <path d="M800 805 L800 870 L432 870 L432 895" class="arrow"/>
+
+  <!-- LLM arrows -->
+  <path d="M580 924 L655 924" class="arrow"/>
+  <path d="M925 924 L1010 924" class="arrow"/>
+
+  <!-- Fallback path -->
+  <path d="M432 895 L432 855 L1155 855 L1155 895" class="dash"/>
+  <text x="793" y="848" text-anchor="middle" class="small">si Ollama est desactive ou indisponible: affichage du contexte brut</text>
+</svg>

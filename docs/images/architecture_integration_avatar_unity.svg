@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="900" viewBox="0 0 1700 900">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #374151; }
+      .section { font: 700 20px Arial, sans-serif; fill: #0f3b8f; }
+      .box-title { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .text { font: 15px Arial, sans-serif; fill: #111827; }
+      .small { font: 13px Arial, sans-serif; fill: #374151; }
+      .note { font: italic 14px Arial, sans-serif; fill: #0f3b8f; }
+      .layer { fill: #ffffff; stroke: #1d4ed8; stroke-width: 1.5; stroke-dasharray: 7 5; rx: 18; }
+      .input { fill: #f8fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .frontend { fill: #fbfbff; stroke: #7c3aed; stroke-width: 2; rx: 14; }
+      .backend { fill: #eefaf1; stroke: #047857; stroke-width: 2; rx: 14; }
+      .data { fill: #f7fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .llm { fill: #fff1f2; stroke: #be123c; stroke-width: 2; rx: 14; }
+      .tts { fill: #fff8e8; stroke: #92400e; stroke-width: 2; rx: 14; }
+      .unity { fill: #f9fafb; stroke: #111827; stroke-width: 2; rx: 14; }
+      .output { fill: #f0fdf4; stroke: #047857; stroke-width: 2; rx: 14; }
+      .arrow { stroke: #1f2937; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #1f2937; stroke-width: 1.8; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1700" height="900" fill="#ffffff"/>
+  <text x="850" y="45" text-anchor="middle" class="title">Architecture d'Integration de l'Avatar Unity</text>
+  <text x="850" y="75" text-anchor="middle" class="subtitle">Communication entre l'interface, le backend, les modules IA et l'avatar virtuel</text>
+
+  <text x="55" y="155" class="section">1. Interaction</text>
+  <text x="55" y="180" class="section">utilisateur</text>
+  <rect x="220" y="115" width="1260" height="130" class="layer"/>
+
+  <text x="55" y="355" class="section">2. Traitement</text>
+  <text x="55" y="380" class="section">intelligent</text>
+  <rect x="220" y="310" width="1260" height="170" class="layer"/>
+
+  <text x="55" y="575" class="section">3. Restitution</text>
+  <text x="55" y="600" class="section">multimodale</text>
+  <rect x="220" y="530" width="1260" height="220" class="layer"/>
+
+  <!-- Interaction -->
+  <rect x="270" y="145" width="220" height="75" class="input"/>
+  <text x="380" y="174" text-anchor="middle" class="box-title">Utilisateur</text>
+  <text x="380" y="199" text-anchor="middle" class="small">question texte ou vocale</text>
+
+  <rect x="570" y="145" width="250" height="75" class="frontend"/>
+  <text x="695" y="174" text-anchor="middle" class="box-title">Interface graphique</text>
+  <text x="695" y="199" text-anchor="middle" class="small">saisie, micro, affichage</text>
+
+  <rect x="900" y="145" width="270" height="75" class="backend"/>
+  <text x="1035" y="174" text-anchor="middle" class="box-title">Backend FastAPI</text>
+  <text x="1035" y="199" text-anchor="middle" class="small">orchestration des traitements</text>
+
+  <!-- Intelligent processing -->
+  <rect x="275" y="350" width="245" height="85" class="backend"/>
+  <text x="397" y="380" text-anchor="middle" class="box-title">Pipeline NLP</text>
+  <text x="397" y="406" text-anchor="middle" class="small">intention, entites, contexte</text>
+
+  <rect x="600" y="350" width="230" height="85" class="data"/>
+  <text x="715" y="380" text-anchor="middle" class="box-title">PostgreSQL / RAG</text>
+  <text x="715" y="406" text-anchor="middle" class="small">donnees institutionnelles</text>
+
+  <rect x="910" y="350" width="210" height="85" class="llm"/>
+  <text x="1015" y="380" text-anchor="middle" class="box-title">Ollama LLM</text>
+  <text x="1015" y="406" text-anchor="middle" class="small">reformulation</text>
+
+  <rect x="1200" y="350" width="220" height="85" class="output"/>
+  <text x="1310" y="380" text-anchor="middle" class="box-title">Reponse</text>
+  <text x="1310" y="406" text-anchor="middle" class="small">texte final structure</text>
+
+  <!-- Multimodal output -->
+  <rect x="270" y="580" width="230" height="90" class="tts"/>
+  <text x="385" y="610" text-anchor="middle" class="box-title">Text-To-Speech</text>
+  <text x="385" y="636" text-anchor="middle" class="small">conversion texte vers voix</text>
+  <text x="385" y="656" text-anchor="middle" class="small">audio de la reponse</text>
+
+  <rect x="590" y="580" width="260" height="90" class="unity"/>
+  <text x="720" y="610" text-anchor="middle" class="box-title">Application Unity</text>
+  <text x="720" y="636" text-anchor="middle" class="small">reception reponse + audio</text>
+  <text x="720" y="656" text-anchor="middle" class="small">controle de l'avatar</text>
+
+  <rect x="940" y="580" width="250" height="90" class="unity"/>
+  <text x="1065" y="610" text-anchor="middle" class="box-title">Avatar virtuel</text>
+  <text x="1065" y="636" text-anchor="middle" class="small">animations, gestes,</text>
+  <text x="1065" y="656" text-anchor="middle" class="small">synchronisation vocale</text>
+
+  <rect x="1280" y="580" width="180" height="90" class="output"/>
+  <text x="1370" y="610" text-anchor="middle" class="box-title">Restitution</text>
+  <text x="1370" y="636" text-anchor="middle" class="small">visuelle et vocale</text>
+
+  <!-- Optional display -->
+  <rect x="590" y="700" width="600" height="35" class="frontend"/>
+  <text x="890" y="723" text-anchor="middle" class="small">La reponse peut aussi rester affichee sous forme textuelle dans l'interface.</text>
+
+  <!-- Arrows -->
+  <path d="M490 183 L570 183" class="arrow"/>
+  <path d="M820 183 L900 183" class="arrow"/>
+  <path d="M1035 220 L1035 285 L397 285 L397 350" class="arrow"/>
+
+  <path d="M520 392 L600 392" class="arrow"/>
+  <path d="M830 392 L910 392" class="arrow"/>
+  <path d="M1120 392 L1200 392" class="arrow"/>
+
+  <path d="M1310 435 L1310 505 L385 505 L385 580" class="arrow"/>
+  <path d="M1310 435 L1310 505 L720 505 L720 580" class="arrow"/>
+  <path d="M500 625 L590 625" class="arrow"/>
+  <path d="M850 625 L940 625" class="arrow"/>
+  <path d="M1190 625 L1280 625" class="arrow"/>
+
+  <text x="850" y="845" text-anchor="middle" class="note">Objectif: offrir une interaction plus naturelle pour une borne d'accueil universitaire.</text>
+</svg>

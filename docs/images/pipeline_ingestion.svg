@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .section { font: 700 20px Arial, sans-serif; fill: #0f3b8f; }
+      .box-title { font: 700 18px Arial, sans-serif; fill: #111827; }
+      .text { font: 15px Arial, sans-serif; fill: #111827; }
+      .small { font: 13px Arial, sans-serif; fill: #374151; }
+      .note { font: italic 14px Arial, sans-serif; fill: #0f3b8f; }
+      .source { fill: #f8fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .process { fill: #fff8e8; stroke: #92400e; stroke-width: 2; rx: 14; }
+      .python { fill: #eefaf1; stroke: #047857; stroke-width: 2; rx: 14; }
+      .db { fill: #f7fbff; stroke: #1d4ed8; stroke-width: 2; rx: 14; }
+      .rag { fill: #fbf8ff; stroke: #7c3aed; stroke-width: 2; rx: 14; }
+      .layer { fill: #ffffff; stroke: #1d4ed8; stroke-width: 1.5; stroke-dasharray: 7 5; rx: 18; }
+      .arrow { stroke: #1f2937; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .thin { stroke: #1f2937; stroke-width: 1.8; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #1f2937; stroke-width: 1.8; fill: none; stroke-dasharray: 6 4; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="980" fill="#ffffff"/>
+  <text x="800" y="45" text-anchor="middle" class="title">Pipeline d'Ingestion des Donnees</text>
+  <text x="800" y="75" text-anchor="middle" class="text">Lecture, transformation, normalisation et insertion des donnees academiques dans PostgreSQL et pgvector</text>
+
+  <!-- Layer labels -->
+  <text x="55" y="150" class="section">1. Sources</text>
+  <text x="55" y="175" class="section">initiales</text>
+  <rect x="220" y="110" width="1160" height="130" class="layer"/>
+
+  <text x="55" y="310" class="section">2. Preparation</text>
+  <text x="55" y="335" class="section">des fichiers</text>
+  <rect x="220" y="270" width="1160" height="130" class="layer"/>
+
+  <text x="55" y="475" class="section">3. Script</text>
+  <text x="55" y="500" class="section">d'ingestion</text>
+  <rect x="220" y="430" width="1160" height="165" class="layer"/>
+
+  <text x="55" y="670" class="section">4. Insertion</text>
+  <text x="55" y="695" class="section">relationnelle</text>
+  <rect x="220" y="625" width="1160" height="160" class="layer"/>
+
+  <text x="55" y="860" class="section">5. Documents</text>
+  <text x="55" y="885" class="section">et RAG</text>
+  <rect x="220" y="815" width="1160" height="135" class="layer"/>
+
+  <!-- Sources -->
+  <rect x="270" y="135" width="240" height="80" class="source"/>
+  <text x="390" y="164" text-anchor="middle" class="box-title">PDF emplois du temps</text>
+  <text x="390" y="190" text-anchor="middle" class="small">fichiers sources fournis</text>
+
+  <rect x="560" y="135" width="240" height="80" class="source"/>
+  <text x="680" y="164" text-anchor="middle" class="box-title">Excel plans d'etudes</text>
+  <text x="680" y="190" text-anchor="middle" class="small">UE, matieres, coefficients</text>
+
+  <rect x="850" y="135" width="240" height="80" class="source"/>
+  <text x="970" y="164" text-anchor="middle" class="box-title">Excel listes etudiants</text>
+  <text x="970" y="190" text-anchor="middle" class="small">groupes, noms, emails</text>
+
+  <rect x="1140" y="135" width="200" height="80" class="source"/>
+  <text x="1240" y="164" text-anchor="middle" class="box-title">Textes descriptifs</text>
+  <text x="1240" y="190" text-anchor="middle" class="small">formations, documents</text>
+
+  <!-- Preparation -->
+  <rect x="270" y="295" width="240" height="80" class="process"/>
+  <text x="390" y="324" text-anchor="middle" class="box-title">Conversion PDF -> JSON</text>
+  <text x="390" y="350" text-anchor="middle" class="small">emplois exploitables</text>
+
+  <rect x="560" y="295" width="240" height="80" class="process"/>
+  <text x="680" y="324" text-anchor="middle" class="box-title">Organisation Excel</text>
+  <text x="680" y="350" text-anchor="middle" class="small">plans d'etudes normalisables</text>
+
+  <rect x="850" y="295" width="240" height="80" class="process"/>
+  <text x="970" y="324" text-anchor="middle" class="box-title">Conservation Excel</text>
+  <text x="970" y="350" text-anchor="middle" class="small">listes etudiants deja exploitables</text>
+
+  <rect x="1140" y="295" width="200" height="80" class="process"/>
+  <text x="1240" y="324" text-anchor="middle" class="box-title">Nettoyage texte</text>
+  <text x="1240" y="350" text-anchor="middle" class="small">contenu documentaire</text>
+
+  <!-- Script ingestion -->
+  <rect x="300" y="455" width="270" height="105" class="python"/>
+  <text x="435" y="485" text-anchor="middle" class="box-title">Chargement configuration</text>
+  <text x="435" y="512" text-anchor="middle" class="small">.env, DATABASE_URL, Ollama</text>
+  <text x="435" y="535" text-anchor="middle" class="small">connexion PostgreSQL</text>
+
+  <rect x="650" y="455" width="270" height="105" class="python"/>
+  <text x="785" y="485" text-anchor="middle" class="box-title">Lecture automatique</text>
+  <text x="785" y="512" text-anchor="middle" class="small">parcours des dossiers Data</text>
+  <text x="785" y="535" text-anchor="middle" class="small">detection PDF/JSON/Excel/TXT</text>
+
+  <rect x="1000" y="455" width="270" height="105" class="python"/>
+  <text x="1135" y="485" text-anchor="middle" class="box-title">Normalisation</text>
+  <text x="1135" y="512" text-anchor="middle" class="small">formations, groupes, dates</text>
+  <text x="1135" y="535" text-anchor="middle" class="small">valeurs numeriques et libelles</text>
+
+  <text x="800" y="585" text-anchor="middle" class="note">Script principal: scripts/ingest_data.py</text>
+
+  <!-- Relational insertion -->
+  <rect x="255" y="650" width="210" height="90" class="db"/>
+  <text x="360" y="680" text-anchor="middle" class="box-title">Formations</text>
+  <text x="360" y="706" text-anchor="middle" class="small">description courte</text>
+
+  <rect x="495" y="650" width="210" height="90" class="db"/>
+  <text x="600" y="680" text-anchor="middle" class="box-title">Niveaux &amp; semestres</text>
+  <text x="600" y="706" text-anchor="middle" class="small">annees 1, 2, 3</text>
+
+  <rect x="735" y="650" width="210" height="90" class="db"/>
+  <text x="840" y="680" text-anchor="middle" class="box-title">Groupes &amp; etudiants</text>
+  <text x="840" y="706" text-anchor="middle" class="small">noms, emails, groupe_id</text>
+
+  <rect x="975" y="650" width="210" height="90" class="db"/>
+  <text x="1080" y="680" text-anchor="middle" class="box-title">Emplois du temps</text>
+  <text x="1080" y="706" text-anchor="middle" class="small">jour, horaire, salle</text>
+
+  <rect x="1215" y="650" width="135" height="90" class="db"/>
+  <text x="1282" y="675" text-anchor="middle" class="box-title">Plans &amp;</text>
+  <text x="1282" y="698" text-anchor="middle" class="box-title">calendrier</text>
+  <text x="1282" y="724" text-anchor="middle" class="small">UE, matieres</text>
+
+  <!-- RAG ingestion -->
+  <rect x="270" y="835" width="220" height="80" class="rag"/>
+  <text x="380" y="865" text-anchor="middle" class="box-title">Table documents</text>
+  <text x="380" y="890" text-anchor="middle" class="small">descriptions et contenus textuels</text>
+
+  <rect x="540" y="835" width="220" height="80" class="rag"/>
+  <text x="650" y="865" text-anchor="middle" class="box-title">Decoupage en chunks</text>
+  <text x="650" y="890" text-anchor="middle" class="small">segments de texte exploitables</text>
+
+  <rect x="810" y="835" width="220" height="80" class="rag"/>
+  <text x="920" y="865" text-anchor="middle" class="box-title">embeddinggemma</text>
+  <text x="920" y="890" text-anchor="middle" class="small">generation embeddings 768</text>
+
+  <rect x="1080" y="835" width="250" height="80" class="rag"/>
+  <text x="1205" y="865" text-anchor="middle" class="box-title">document_chunks + pgvector</text>
+  <text x="1205" y="890" text-anchor="middle" class="small">stockage vectoriel pour RAG</text>
+
+  <!-- Validation -->
+  <rect x="590" y="760" width="420" height="45" class="python"/>
+  <text x="800" y="789" text-anchor="middle" class="box-title">Validation de l'insertion dans PostgreSQL</text>
+
+  <!-- Arrows -->
+  <path d="M390 215 L390 295" class="arrow"/>
+  <path d="M680 215 L680 295" class="arrow"/>
+  <path d="M970 215 L970 295" class="arrow"/>
+  <path d="M1240 215 L1240 295" class="arrow"/>
+
+  <path d="M390 375 L435 455" class="arrow"/>
+  <path d="M680 375 L785 455" class="arrow"/>
+  <path d="M970 375 L785 455" class="arrow"/>
+  <path d="M1240 375 L1135 455" class="arrow"/>
+
+  <path d="M570 508 L650 508" class="arrow"/>
+  <path d="M920 508 L1000 508" class="arrow"/>
+
+  <path d="M1135 560 L360 650" class="arrow"/>
+  <path d="M1135 560 L600 650" class="arrow"/>
+  <path d="M1135 560 L840 650" class="arrow"/>
+  <path d="M1135 560 L1080 650" class="arrow"/>
+  <path d="M1135 560 L1282 650" class="arrow"/>
+
+  <path d="M360 740 L680 760" class="thin"/>
+  <path d="M600 740 L720 760" class="thin"/>
+  <path d="M840 740 L800 760" class="thin"/>
+  <path d="M1080 740 L890 760" class="thin"/>
+  <path d="M1282 740 L960 760" class="thin"/>
+
+  <path d="M1240 375 L380 835" class="dash"/>
+  <path d="M490 875 L540 875" class="arrow"/>
+  <path d="M760 875 L810 875" class="arrow"/>
+  <path d="M1030 875 L1080 875" class="arrow"/>
+
+  <text x="800" y="945" text-anchor="middle" class="note">Objectif: centraliser les donnees academiques et preparer la recherche SQL + RAG pour l'assistant</text>
+</svg>

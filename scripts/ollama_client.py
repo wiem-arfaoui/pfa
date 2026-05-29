@@ -87,10 +87,13 @@ Ne supprime aucun evenement.""",
     "formation_description": {
         "system": """Tu reformules une description de formation.
 Tu peux resumer legerement, mais sans inventer d'information.
-Tu dois rester fidele au contenu et garder les points importants.""",
+Tu dois rester fidele au contenu et garder les points importants.
+Si la question compare deux formations, tu dois expliquer les differences uniquement a partir des passages fournis.
+Pour une comparaison, distingue clairement l'orientation, les competences et les debouches si ces informations existent dans le contexte.""",
         "user": """Format attendu:
 - un court paragraphe d'introduction
-- puis 3 a 6 points cles si le contexte est riche""",
+- puis 3 a 6 points cles si le contexte est riche
+- si c'est une comparaison, terminer par une phrase simple qui resume la difference principale""",
     },
 }
 

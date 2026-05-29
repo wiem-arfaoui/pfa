@@ -11,6 +11,7 @@ from db_utils import load_env_file, normalize_text
 from entity_resolver import resolve_entities
 from intent_router import IntentResult, normalize_query, parse_question
 from ollama_client import OllamaClient
+from rag_retriever import RagRetriever, format_rag_context
 
 
 EXIT_COMMANDS = {"exit", "quit", "q", "bye"}
@@ -223,8 +224,40 @@ def context_groupes(conn: psycopg.Connection[Any], route: IntentResult) -> str:
     return "\n".join(["Groupes trouves:"] + [f"- {formation}, annee {year}: {group}" for formation, year, group in rows])
 
 
-def context_description(conn: psycopg.Connection[Any], route: IntentResult) -> str:
+def context_description(conn: psycopg.Connection[Any], route: IntentResult, question: str = "") -> str:
     formation_code = route.entities.get("formation_code")
+    formation_codes = route.entities.get("formation_codes") or ([formation_code] if formation_code else [])
+    rag_query = question or route.entities.get("hint") or route.entities.get("formation") or "description formation"
+
+    try:
+        retriever = RagRetriever()
+        chunks = []
+        if len(formation_codes) >= 2:
+            for code in formation_codes:
+                chunks.extend(
+                    retriever.search(
+                        conn,
+                        rag_query,
+                        formation_code=code,
+                        document_type="description",
+                        top_k=1,
+                    )
+                )
+        else:
+            chunks = retriever.search(
+                conn,
+                rag_query,
+                formation_code=formation_code,
+                document_type="description",
+                top_k=4,
+            )
+        if chunks:
+            return format_rag_context(chunks, rag_query)
+    except Exception as exc:
+        rag_error = str(exc)
+    else:
+        rag_error = "Aucun chunk avec embedding trouve."
+
     with conn.cursor() as cur:
         cur.execute(
             """
@@ -243,7 +276,11 @@ def context_description(conn: psycopg.Connection[Any], route: IntentResult) -> s
         return "Je n'ai pas trouve la description de cette formation dans la base."
 
     formation_name, content = row
-    return f"Description de la formation {formation_name}:\n{normalize_text(content)[:1200].strip()}"
+    return (
+        "La recherche RAG n'a pas pu etre executee, donc voici un extrait textuel direct.\n"
+        f"Cause RAG: {rag_error}\n\n"
+        f"Description de la formation {formation_name}:\n{normalize_text(content)[:1200].strip()}"
+    )
 
 
 def context_plan(conn: psycopg.Connection[Any], route: IntentResult) -> str:
@@ -457,7 +494,7 @@ def context_salles(conn: psycopg.Connection[Any], route: IntentResult) -> str:
     return "\n".join(lines)
 
 
-def build_context(conn: psycopg.Connection[Any], route: IntentResult) -> str:
+def build_context(conn: psycopg.Connection[Any], route: IntentResult, question: str = "") -> str:
     handlers = {
         "emploi_temps": context_emploi,
         "etudiants": context_etudiants,
@@ -474,11 +511,17 @@ def build_context(conn: psycopg.Connection[Any], route: IntentResult) -> str:
             "Type de question non reconnu. Exemples possibles: emploi du temps de GSI 2A lundi, "
             "etudiants INFO 1A, modules semestre 2 informatique, date des examens."
         )
+    if route.intent == "formation_description":
+        return handler(conn, route, question)
     return handler(conn, route)
 
 
 def build_llm_metadata(route: IntentResult) -> str:
     parts: list[str] = [f"intent={route.intent}"]
+    if route.entities.get("formations"):
+        parts.append(f"formations_cibles={', '.join(route.entities['formations'])}")
+        if len(route.entities["formations"]) >= 2:
+            parts.append("type_question=comparaison_entre_formations")
     if route.entities.get("student_name"):
         parts.append(f"personne_cible={route.entities['student_name']}")
         parts.append("role_personne_cible=etudiant")
@@ -510,17 +553,18 @@ def answer(
     if missing_answer:
         return missing_answer
 
-    context = build_context(conn, route)
+    context = build_context(conn, route, question)
     debug_text = ""
     if debug:
+        debug_label = "INTENT + RAG" if route.intent == "formation_description" else "INTENT + SQL"
         debug_text = (
-            "[DEBUG: INTENT + SQL]\n"
+            f"[DEBUG: {debug_label}]\n"
             f"intent={route.intent}\n"
             f"confidence={route.confidence:.2f}\n"
             f"entities={route.entities}\n"
             f"sources={route.sources}\n"
             f"context=\n{context}\n"
-            "[/DEBUG: INTENT + SQL]\n\n"
+            f"[/DEBUG: {debug_label}]\n\n"
         )
 
     if ollama is None:

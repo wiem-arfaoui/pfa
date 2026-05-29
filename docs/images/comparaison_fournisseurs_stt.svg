@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="820" viewBox="0 0 1700 820">
+  <defs>
+    <style>
+      .title { font: 700 34px Arial, sans-serif; fill: #111827; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #374151; }
+      .header { fill: #0f3b8f; stroke: #1d4ed8; stroke-width: 1.5; }
+      .header-text { font: 700 15px Arial, sans-serif; fill: #ffffff; }
+      .cell { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .cell-alt { fill: #f8fbff; stroke: #cbd5e1; stroke-width: 1.4; }
+      .selected { fill: #eefaf1; stroke: #047857; stroke-width: 2; }
+      .provider { font: 700 16px Arial, sans-serif; fill: #111827; }
+      .text { font: 14px Arial, sans-serif; fill: #111827; }
+      .small { font: 13px Arial, sans-serif; fill: #374151; }
+      .badge { fill: #047857; rx: 12; }
+      .badge-text { font: 700 12px Arial, sans-serif; fill: #ffffff; }
+      .note { font: italic 14px Arial, sans-serif; fill: #0f3b8f; }
+    </style>
+  </defs>
+
+  <rect width="1700" height="820" fill="#ffffff"/>
+  <text x="850" y="48" text-anchor="middle" class="title">Etude Comparative des Fournisseurs STT</text>
+  <text x="850" y="78" text-anchor="middle" class="subtitle">Comparaison entre transcription locale et services cloud pour l'assistant vocal universitaire</text>
+
+  <!-- Table geometry -->
+  <g transform="translate(55,125)">
+    <!-- Header -->
+    <rect x="0" y="0" width="235" height="70" class="header"/>
+    <rect x="235" y="0" width="150" height="70" class="header"/>
+    <rect x="385" y="0" width="190" height="70" class="header"/>
+    <rect x="575" y="0" width="260" height="70" class="header"/>
+    <rect x="835" y="0" width="260" height="70" class="header"/>
+    <rect x="1095" y="0" width="205" height="70" class="header"/>
+    <rect x="1300" y="0" width="290" height="70" class="header"/>
+
+    <text x="117" y="42" text-anchor="middle" class="header-text">Fournisseur STT</text>
+    <text x="310" y="42" text-anchor="middle" class="header-text">Type</text>
+    <text x="480" y="42" text-anchor="middle" class="header-text">Cout</text>
+    <text x="705" y="42" text-anchor="middle" class="header-text">Integration</text>
+    <text x="965" y="42" text-anchor="middle" class="header-text">Precision</text>
+    <text x="1197" y="34" text-anchor="middle" class="header-text">Dependance</text>
+    <text x="1197" y="53" text-anchor="middle" class="header-text">Internet</text>
+    <text x="1445" y="34" text-anchor="middle" class="header-text">Gestion des</text>
+    <text x="1445" y="53" text-anchor="middle" class="header-text">noms propres</text>
+
+    <!-- Row 1 selected -->
+    <rect x="0" y="70" width="235" height="150" class="selected"/>
+    <rect x="235" y="70" width="150" height="150" class="selected"/>
+    <rect x="385" y="70" width="190" height="150" class="selected"/>
+    <rect x="575" y="70" width="260" height="150" class="selected"/>
+    <rect x="835" y="70" width="260" height="150" class="selected"/>
+    <rect x="1095" y="70" width="205" height="150" class="selected"/>
+    <rect x="1300" y="70" width="290" height="150" class="selected"/>
+
+    <text x="18" y="108" class="provider">Whisper /</text>
+    <text x="18" y="130" class="provider">faster-whisper</text>
+    <rect x="18" y="150" width="98" height="24" class="badge"/>
+    <text x="67" y="167" text-anchor="middle" class="badge-text">RETENU</text>
+    <text x="310" y="138" text-anchor="middle" class="text">Local</text>
+    <text x="405" y="116" class="text">Gratuit hors</text>
+    <text x="405" y="138" class="text">cout machine</text>
+    <text x="595" y="106" class="text">Moyenne:</text>
+    <text x="595" y="128" class="text">installation locale</text>
+    <text x="595" y="150" class="text">et configuration</text>
+    <text x="595" y="172" class="text">du modele</text>
+    <text x="855" y="106" class="text">Bonne en francais,</text>
+    <text x="855" y="128" class="text">variable selon</text>
+    <text x="855" y="150" class="text">le bruit et</text>
+    <text x="855" y="172" class="text">le materiel</text>
+    <text x="1115" y="126" class="text">Non, apres</text>
+    <text x="1115" y="148" class="text">installation</text>
+    <text x="1115" y="170" class="text">du modele</text>
+    <text x="1320" y="106" class="text">Moyenne:</text>
+    <text x="1320" y="128" class="text">correction metier</text>
+    <text x="1320" y="150" class="text">necessaire pour</text>
+    <text x="1320" y="172" class="text">les noms rares</text>
+
+    <!-- Row 2 -->
+    <rect x="0" y="220" width="235" height="130" class="cell"/>
+    <rect x="235" y="220" width="150" height="130" class="cell"/>
+    <rect x="385" y="220" width="190" height="130" class="cell"/>
+    <rect x="575" y="220" width="260" height="130" class="cell"/>
+    <rect x="835" y="220" width="260" height="130" class="cell"/>
+    <rect x="1095" y="220" width="205" height="130" class="cell"/>
+    <rect x="1300" y="220" width="290" height="130" class="cell"/>
+
+    <text x="18" y="282" class="provider">Groq STT</text>
+    <text x="310" y="282" text-anchor="middle" class="text">API cloud</text>
+    <text x="405" y="262" class="text">Selon usage</text>
+    <text x="405" y="284" class="text">et quotas du</text>
+    <text x="405" y="306" class="text">fournisseur</text>
+    <text x="595" y="272" class="text">Simple:</text>
+    <text x="595" y="294" class="text">appel API</text>
+    <text x="855" y="262" class="text">Bonne, avec</text>
+    <text x="855" y="284" class="text">latence faible</text>
+    <text x="855" y="306" class="text">selon le service</text>
+    <text x="1197" y="282" text-anchor="middle" class="text">Oui</text>
+    <text x="1320" y="262" class="text">Moyenne a bonne,</text>
+    <text x="1320" y="284" class="text">depend du modele</text>
+    <text x="1320" y="306" class="text">et du contexte fourni</text>
+
+    <!-- Row 3 -->
+    <rect x="0" y="350" width="235" height="145" class="cell-alt"/>
+    <rect x="235" y="350" width="150" height="145" class="cell-alt"/>
+    <rect x="385" y="350" width="190" height="145" class="cell-alt"/>
+    <rect x="575" y="350" width="260" height="145" class="cell-alt"/>
+    <rect x="835" y="350" width="260" height="145" class="cell-alt"/>
+    <rect x="1095" y="350" width="205" height="145" class="cell-alt"/>
+    <rect x="1300" y="350" width="290" height="145" class="cell-alt"/>
+
+    <text x="18" y="420" class="provider">AssemblyAI</text>
+    <text x="310" y="420" text-anchor="middle" class="text">API cloud</text>
+    <text x="405" y="400" class="text">Selon usage</text>
+    <text x="405" y="422" class="text">et quotas du</text>
+    <text x="405" y="444" class="text">fournisseur</text>
+    <text x="595" y="390" class="text">Simple:</text>
+    <text x="595" y="412" class="text">upload audio,</text>
+    <text x="595" y="434" class="text">creation transcription</text>
+    <text x="595" y="456" class="text">et polling</text>
+    <text x="855" y="400" class="text">Bonne, avec</text>
+    <text x="855" y="422" class="text">options comme</text>
+    <text x="855" y="444" class="text">keyterms_prompt</text>
+    <text x="1197" y="420" text-anchor="middle" class="text">Oui</text>
+    <text x="1320" y="400" class="text">Bonne avec mots cles,</text>
+    <text x="1320" y="422" class="text">mais depend toujours</text>
+    <text x="1320" y="444" class="text">du service externe</text>
+  </g>
+
+  <text x="850" y="700" text-anchor="middle" class="note">Choix retenu: faster-whisper en local, complete par une couche de correction et d'Entity Linking pour les noms propres.</text>
+</svg>

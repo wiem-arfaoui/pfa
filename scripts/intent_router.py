@@ -52,7 +52,7 @@ EMPLOI_KEYWORDS = (
 )
 ETUDIANT_KEYWORDS = (
     "etudiant", "etudiants", "eleve", "eleves", "email", "mail",
-    "qui est dans", "membres",
+    "qui est dans", "membres", "liste", "liste des etudiants", "liste etudiants",
 )
 GROUPE_KEYWORDS = ("groupe", "groupes", "classe", "classes")
 PLAN_KEYWORDS = (
@@ -63,6 +63,10 @@ PLAN_KEYWORDS = (
 DESCRIPTION_KEYWORDS = (
     "formation", "presente", "presenter", "description", "c est quoi", "objectif",
     "objectifs", "metier", "metiers", "debouche", "debouches", "stage", "stages",
+)
+COMPARISON_KEYWORDS = (
+    "difference", "differences", "different", "differente", "differents", "differentes",
+    "comparer", "compare", "comparaison", "versus", "vs", "entre",
 )
 CALENDAR_KEYWORDS = (
     "calendrier", "date", "dates", "quand", "examen", "examens", "ds", "soutenance",
@@ -113,6 +117,17 @@ def detect_formation(text: str) -> str | None:
             if re.search(rf"\b{re.escape(normalized_alias)}\b", text):
                 return canonical
     return None
+
+
+def detect_formations(text: str) -> list[str]:
+    found: list[str] = []
+    for canonical, aliases in FORMATION_ALIASES.items():
+        for alias in aliases:
+            normalized_alias = normalize_query(alias)
+            if re.search(rf"\b{re.escape(normalized_alias)}\b", text):
+                found.append(canonical)
+                break
+    return found
 
 
 def detect_year(text: str) -> int | None:
@@ -260,6 +275,8 @@ def choose_intent(text: str, entities: dict[str, Any]) -> tuple[str, float]:
         scores["plan_etudes"] += 4
     if has_any(text, DESCRIPTION_KEYWORDS):
         scores["formation_description"] += 3
+    if has_any(text, COMPARISON_KEYWORDS) and len(entities.get("formations", [])) >= 2:
+        scores["formation_description"] += 8
     if has_any(text, CALENDAR_KEYWORDS):
         scores["calendrier"] += 2
     if has_any(text, ENSEIGNANT_KEYWORDS):
@@ -281,6 +298,15 @@ def choose_intent(text: str, entities: dict[str, Any]) -> tuple[str, float]:
         scores["calendrier"] -= 1
     if "qui est dans" in text:
         scores["etudiants"] += 5
+    if (
+        ("liste" in text or "donner la liste" in text or "liste de" in text)
+        and entities.get("group")
+        and not has_any(text, EMPLOI_KEYWORDS)
+        and not has_any(text, PLAN_KEYWORDS)
+    ):
+        scores["etudiants"] += 7
+        scores["emploi_temps"] -= 2
+        scores["groupes"] -= 1
     if "combien" in text and entities.get("group"):
         scores["etudiants"] += 2
     if "groupe" in text or "groupes" in text:
@@ -332,7 +358,7 @@ def missing_for(intent: str, entities: dict[str, Any]) -> list[str]:
             missing.append("formation")
         if not entities.get("semester") and not entities.get("year") and not entities.get("ue_code"):
             missing.append("semestre_ou_annee_ou_ue")
-    if intent == "formation_description" and not entities.get("formation"):
+    if intent == "formation_description" and not entities.get("formation") and not entities.get("formations"):
         missing.append("formation")
     return missing
 
@@ -348,7 +374,12 @@ def parse_question(question: str) -> IntentResult:
         if year_match:
             entities["year"] = int(year_match.group(1))
 
-    formation = detect_formation(text)
+    formations = detect_formations(text)
+    if formations:
+        entities["formations"] = formations
+        entities["formation_codes"] = [FORMATION_CODES[item] for item in formations]
+
+    formation = formations[0] if formations else detect_formation(text)
     if formation:
         entities["formation"] = formation
         entities["formation_code"] = FORMATION_CODES[formation]
